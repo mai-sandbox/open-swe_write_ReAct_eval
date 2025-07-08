@@ -6,9 +6,8 @@ All tools include comprehensive type hints and error handling as required by pro
 """
 
 import ast
-import operator
 import re
-from typing import Any, Dict, List, Union
+from typing import Any, List
 
 from langchain_core.tools import tool
 from langchain_tavily import TavilySearch
@@ -93,4 +92,5 @@ def calculator(expression: str) -> str:
 
 # Export the tools list for use in the main agent
 tools: List[Any] = [web_search, calculator]
+
 
