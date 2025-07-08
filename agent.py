@@ -7,6 +7,7 @@ web search, and mathematical calculations using the tools defined in tools.py.
 
 import os
 from typing import Annotated, TypedDict
+from typing import Any
 
 from dotenv import load_dotenv
 from langchain_anthropic import ChatAnthropic
@@ -31,7 +32,7 @@ class State(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
 
 
-def init_chat_model() -> ChatAnthropic:
+def init_chat_model() -> Any:
     """
     Initialize the Anthropic Claude chat model with tools bound.
     
@@ -47,9 +48,8 @@ def init_chat_model() -> ChatAnthropic:
     
     # Initialize the chat model
     llm = ChatAnthropic(
-        model="claude-3-5-sonnet-20241022",
-        api_key=api_key,
-        temperature=0.7
+        model_name="claude-3-5-sonnet-20241022",
+        anthropic_api_key=api_key
     )
     
     # Bind tools to the model for tool calling capability
@@ -88,10 +88,11 @@ graph.add_node("tools", ToolNode(tools))
 
 # Add edges to the graph
 graph.add_edge(START, "chatbot")
-graph.add_conditional_edge("chatbot", tools_condition)
+graph.add_conditional_edges("chatbot", tools_condition)
 graph.add_edge("tools", "chatbot")
 
 # Compile the graph
 app = graph.compile()
+
 
 
