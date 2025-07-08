@@ -42,4 +42,4 @@ The agent can:
 4. **Choose Appropriately**: Know when to use tools vs. respond directly
 5. **Remember Context**: Reference earlier parts of the conversation
 
-The agent should be able to converse with the user, search for weather using the weather tool, and use the calculator tool for arithmetic.
+The agent should be able to converse with the user, search for info using the web tool, and use the calculator tool for arithmetic.
