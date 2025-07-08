@@ -42,26 +42,4 @@ The agent can:
 4. **Choose Appropriately**: Know when to use tools vs. respond directly
 5. **Remember Context**: Reference earlier parts of the conversation
 
-## Example Interactions
-
-**Conversation:**
-```
-User: Hello, how are you?
-Agent: Hello! I'm doing well, thank you for asking. How can I help you today?
-```
-
-**Tool Usage - Search:**
-```
-User: What's the weather like in New York today?
-Agent: Let me search for current weather information in New York...
-[Uses web search tool]
-Agent: Based on my search, the current weather in New York is...
-```
-
-**Tool Usage - Calculator:**
-```
-User: What's 15% of 240?
-Agent: Let me calculate that for you...
-[Uses calculator tool]
-Agent: 15% of 240 is 36.
-```
+The agent should be able to converse with the user, search for info using the web tool, and use the calculator tool for arithmetic.
