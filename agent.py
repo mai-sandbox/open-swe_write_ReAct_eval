@@ -48,8 +48,7 @@ def init_chat_model() -> Any:
     
     # Initialize the chat model
     llm = ChatAnthropic(
-        model_name="claude-3-5-sonnet-20241022",
-        anthropic_api_key=api_key
+        model="claude-3-5-sonnet-20241022"
     )
     
     # Bind tools to the model for tool calling capability
@@ -93,6 +92,7 @@ graph.add_edge("tools", "chatbot")
 
 # Compile the graph
 app = graph.compile()
+
 
 
 
