@@ -98,7 +98,7 @@ def initialize_search_tool() -> Optional[TavilySearch]:
         return None
 
 
-def initialize_llm() -> Optional[BaseChatModel]:
+def initialize_llm() -> BaseChatModel:
     """Initialize the LLM with error handling."""
     try:
         # Check for required API key
@@ -169,7 +169,7 @@ def chatbot(state: State) -> Dict[str, List[BaseMessage]]:
 # Initialize components with error handling
 try:
     tools = create_tools_list()
-    llm = initialize_llm()
+    llm = initialize_llm()  # This will raise an exception if it fails, so llm is guaranteed to be BaseChatModel
     llm_with_tools = llm.bind_tools(tools)
     logger.info(f"Initialized {len(tools)} tools successfully")
 except Exception as e:
@@ -204,6 +204,7 @@ except Exception as e:
 
 # Export the compiled graph as required
 compiled_graph = graph
+
 
 
 
