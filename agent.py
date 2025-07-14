@@ -177,5 +177,35 @@ except Exception as e:
     raise
 
 
+# Build the graph with error handling
+try:
+    graph_builder = StateGraph(State)
+    
+    # Add nodes
+    graph_builder.add_node("chatbot", chatbot)
+    tool_node = ToolNode(tools=tools)
+    graph_builder.add_node("tools", tool_node)
+    
+    # Add edges
+    graph_builder.add_edge(START, "chatbot")
+    graph_builder.add_conditional_edges(
+        "chatbot",
+        tools_condition,
+    )
+    graph_builder.add_edge("tools", "chatbot")
+    
+    # Compile the graph
+    graph = graph_builder.compile()
+    logger.info("Graph compiled successfully")
+    
+except Exception as e:
+    logger.error(f"Failed to build graph: {e}")
+    raise
+
+# Export the compiled graph as required
+compiled_graph = graph
+
+
+
 
 
