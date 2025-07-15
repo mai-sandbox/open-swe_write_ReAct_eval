@@ -10,6 +10,7 @@ from langchain_core.tools import tool
 from langchain_tavily import TavilySearch
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
+from langgraph.prebuilt import ToolNode, tools_condition
 
 
 class State(TypedDict):
@@ -88,6 +89,27 @@ def chatbot(state: State) -> dict:
     Chatbot node function that processes messages and can use tools when needed.
     """
     return {"messages": [llm_with_tools.invoke(state["messages"])]}
+
+
+# Add nodes to the graph
+graph_builder.add_node("chatbot", chatbot)
+
+# Create and add ToolNode for tools
+tool_node = ToolNode(tools=tools)
+graph_builder.add_node("tools", tool_node)
+
+# Add conditional edges using tools_condition to route between chatbot and tools
+graph_builder.add_conditional_edges("chatbot", tools_condition)
+
+# Add edge from tools back to chatbot
+graph_builder.add_edge("tools", "chatbot")
+
+# Add entry point from START to chatbot
+graph_builder.add_edge(START, "chatbot")
+
+# Compile the graph as compiled_graph variable for export
+compiled_graph = graph_builder.compile()
+
 
 
 
