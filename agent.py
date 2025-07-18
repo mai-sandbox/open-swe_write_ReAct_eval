@@ -11,6 +11,7 @@ This module implements a conversational agent using LangGraph that can:
 from typing import Annotated
 from typing_extensions import TypedDict
 
+from langchain_tavily import TavilySearch
 from langchain.chat_models import init_chat_model
 from langgraph.graph import StateGraph, START
 from langgraph.graph.message import add_messages
@@ -27,6 +28,14 @@ class State(TypedDict):
 
 # Initialize the StateGraph with our State schema
 graph_builder = StateGraph(State)
+
+# Initialize search tool with max_results=2 and error handling
+try:
+    search_tool = TavilySearch(max_results=2)
+    tools = [search_tool]
+except Exception as e:
+    # Handle initialization errors gracefully
+    tools = []
 
 # Initialize Anthropic Claude LLM
 llm = init_chat_model('anthropic:claude-3-5-sonnet-latest')
@@ -55,4 +64,5 @@ graph = graph_builder.compile()
 
 # Export the compiled graph as required by the evaluation script
 compiled_graph = graph
+
 
