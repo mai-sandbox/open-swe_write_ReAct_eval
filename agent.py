@@ -45,10 +45,14 @@ def calculator(expression: str) -> str:
     """
     try:
         # Use eval with restricted globals for basic math operations
+        import builtins
+        allowed_functions = ("abs", "round", "min", "max", "sum", "pow")
         allowed_names = {
-            k: v for k, v in __builtins__.items() 
-            if k in ("abs", "round", "min", "max", "sum", "pow")
+            name: getattr(builtins, name) 
+            for name in allowed_functions 
+            if hasattr(builtins, name)
         }
+        # Add math operators and constants
         allowed_names.update({"__builtins__": {}})
         
         result = eval(expression, allowed_names)
@@ -89,4 +93,5 @@ graph_builder.add_edge("tools", "chatbot")
 
 # Compile the graph
 compiled_graph = graph_builder.compile()
+
 
