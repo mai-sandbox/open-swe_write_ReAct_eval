@@ -79,10 +79,11 @@ try:
         tools.append(search_unavailable)
 except Exception as e:
     # If TavilySearch fails to initialize for any reason, provide a fallback
+    error_message = str(e)  # Capture the error message in the correct scope
     @tool
     def search_error(query: str) -> str:
         """Search tool encountered an error during initialization."""
-        return f"Search functionality encountered an error during initialization: {str(e)}. Please check your TAVILY_API_KEY configuration."
+        return f"Search functionality encountered an error during initialization: {error_message}. Please check your TAVILY_API_KEY configuration."
     
     tools.append(search_error)
 
@@ -114,6 +115,7 @@ graph_builder.add_edge("tools", "chatbot")
 
 # Compile the graph
 compiled_graph = graph_builder.compile()
+
 
 
 
