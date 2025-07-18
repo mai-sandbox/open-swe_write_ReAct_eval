@@ -81,6 +81,10 @@ except Exception as e:
     # If TavilySearch fails to initialize for any reason, provide a fallback
     @tool
     def search_error(query: str) -> str:
+        """Search tool encountered an error during initialization."""
+        return f"Search functionality encountered an error during initialization: {str(e)}. Please check your TAVILY_API_KEY configuration."
+    
+    tools.append(search_error)
 
 # Bind tools to the LLM
 llm_with_tools = llm.bind_tools(tools)
@@ -110,6 +114,7 @@ graph_builder.add_edge("tools", "chatbot")
 
 # Compile the graph
 compiled_graph = graph_builder.compile()
+
 
 
 
