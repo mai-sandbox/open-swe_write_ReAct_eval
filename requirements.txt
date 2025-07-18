@@ -1,0 +1,18 @@
+# Core LangGraph and LangChain dependencies
+langgraph>=0.2.0
+langchain>=0.2.0
+langchain-core>=0.2.0
+langchain-anthropic>=0.1.0
+
+# Web search tool
+langchain-tavily>=0.1.0
+
+# Environment management
+python-dotenv>=1.0.0
+
+# Type checking and development tools
+typing-extensions>=4.5.0
+
+# Additional dependencies for tool functionality
+requests>=2.31.0
+
