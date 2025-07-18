@@ -9,6 +9,7 @@ This module implements a conversational AI assistant that can:
 """
 
 from typing import Annotated
+import os
 
 from langchain_core.messages import BaseMessage
 from langchain_core.tools import tool
@@ -60,9 +61,26 @@ def calculator(expression: str) -> str:
         return f"Error calculating '{expression}': {str(e)}"
 
 
-# Initialize tools
-search_tool = TavilySearch(max_results=2)
-tools = [search_tool, calculator]
+# Initialize tools with error handling for missing API keys
+tools = [calculator]  # Always include calculator
+
+# Try to initialize TavilySearch, but make it optional if API key is missing
+try:
+    if os.getenv("TAVILY_API_KEY"):
+        search_tool = TavilySearch(max_results=2)
+        tools.append(search_tool)
+    else:
+        # Create a dummy search tool that explains the API key is missing
+        @tool
+        def search_unavailable(query: str) -> str:
+            """Search tool is unavailable - TAVILY_API_KEY not configured."""
+            return "Search functionality is currently unavailable. Please configure the TAVILY_API_KEY environment variable to enable web search."
+        
+        tools.append(search_unavailable)
+except Exception as e:
+    # If TavilySearch fails to initialize for any reason, provide a fallback
+    @tool
+    def search_error(query: str) -> str:
 
 # Bind tools to the LLM
 llm_with_tools = llm.bind_tools(tools)
@@ -92,5 +110,6 @@ graph_builder.add_edge("tools", "chatbot")
 
 # Compile the graph
 compiled_graph = graph_builder.compile()
+
 
 
