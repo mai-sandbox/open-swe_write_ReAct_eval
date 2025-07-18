@@ -14,8 +14,9 @@ from typing_extensions import TypedDict
 from langchain_core.tools import tool
 from langchain_tavily import TavilySearch
 from langchain.chat_models import init_chat_model
-from langgraph.graph import StateGraph, START
+from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
+from langgraph.prebuilt import ToolNode, tools_condition
 
 
 class State(TypedDict):
@@ -76,6 +77,8 @@ except Exception as e:
 # Initialize Anthropic Claude LLM
 llm = init_chat_model('anthropic:claude-3-5-sonnet-latest')
 
+# Bind tools to the LLM to enable tool calling
+llm_with_tools = llm.bind_tools(tools)
 
 def chatbot(state: State) -> dict:
     """Main chatbot node that processes user messages and generates responses.
@@ -86,20 +89,33 @@ def chatbot(state: State) -> dict:
     Returns:
         Dictionary with new messages to add to state
     """
-    return {"messages": [llm.invoke(state["messages"])]}
+    return {"messages": [llm_with_tools.invoke(state["messages"])]}
 
 
-# Add the chatbot node to the graph
+# Add nodes to the graph
 graph_builder.add_node("chatbot", chatbot)
 
-# Set up the basic graph structure
+# Create tool node for executing tools
+tool_node = ToolNode(tools=tools)
+graph_builder.add_node("tools", tool_node)
+
+# Set up the graph structure with conditional routing
 graph_builder.add_edge(START, "chatbot")
+
+# Add conditional edges to route between chatbot and tools
+graph_builder.add_conditional_edges(
+    "chatbot",
+    tools_condition,
+)
+# Any time a tool is called, we return to the chatbot to decide the next step
+graph_builder.add_edge("tools", "chatbot")
 
 # Compile the graph
 graph = graph_builder.compile()
 
 # Export the compiled graph as required by the evaluation script
 compiled_graph = graph
+
 
 
 
