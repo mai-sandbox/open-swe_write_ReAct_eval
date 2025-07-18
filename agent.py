@@ -14,7 +14,7 @@ from typing_extensions import TypedDict
 from langchain_core.tools import tool
 from langchain_tavily import TavilySearch
 from langchain.chat_models import init_chat_model
-from langgraph.graph import StateGraph, START, END
+from langgraph.graph import StateGraph, START
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 
@@ -70,7 +70,7 @@ graph_builder = StateGraph(State)
 try:
     search_tool = TavilySearch(max_results=2)
     tools = [search_tool, calculator]
-except Exception as e:
+except Exception:
     # Handle initialization errors gracefully
     tools = [calculator]  # Calculator tool should still work even if search fails
 
@@ -115,6 +115,7 @@ graph = graph_builder.compile()
 
 # Export the compiled graph as required by the evaluation script
 compiled_graph = graph
+
 
 
 
