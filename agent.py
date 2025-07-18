@@ -9,7 +9,6 @@ This module implements a conversational AI assistant that can:
 """
 
 from typing import Annotated
-import operator
 
 from langchain_core.messages import BaseMessage
 from langchain_core.tools import tool
