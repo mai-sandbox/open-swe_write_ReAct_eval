@@ -1,0 +1,15 @@
+Collecting ruff
+  Downloading ruff-0.12.4-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (25 kB)
+Collecting mypy
+  Downloading mypy-1.17.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.2 kB)
+Requirement already satisfied: typing_extensions>=4.6.0 in /usr/local/lib/python3.13/site-packages (from mypy) (4.13.2)
+Requirement already satisfied: mypy_extensions>=1.0.0 in /usr/local/lib/python3.13/site-packages (from mypy) (1.1.0)
+Collecting pathspec>=0.9.0 (from mypy)
+  Downloading pathspec-0.12.1-py3-none-any.whl.metadata (21 kB)
+Downloading ruff-0.12.4-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (11.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.3/11.3 MB 105.9 MB/s eta 0:00:00
+Downloading mypy-1.17.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (12.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.7/12.7 MB 166.5 MB/s eta 0:00:00
+Downloading pathspec-0.12.1-py3-none-any.whl (31 kB)
+Installing collected packages: ruff, pathspec, mypy
+Successfully installed mypy-1.17.0 pathspec-0.12.1 ruff-0.12.4
