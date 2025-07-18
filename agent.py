@@ -69,7 +69,7 @@ def web_search(query: str) -> str:
         
         search_tool = TavilySearch(max_results=3)
         results = search_tool.invoke(query)
-        return f"Search results for '{query}':
+        return f"Search results for '{query}':\n{results}"
         
     except ImportError:
         # Fallback if Tavily is not available
@@ -134,4 +134,5 @@ graph = graph_builder.compile()
 
 # Export the compiled graph as required
 compiled_graph = graph
+
 
