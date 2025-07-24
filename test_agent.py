@@ -1,4 +1,5 @@
 import unittest
+import os
 from agent import calculator, compiled_graph
 from langchain_tavily import TavilySearch
 
@@ -28,6 +29,9 @@ class TestCalculatorTool(unittest.TestCase):
 
 class TestSearchTool(unittest.TestCase):
     def setUp(self):
+        # Set the Tavily API key for testing
+        os.environ["TAVILY_API_KEY"] = "your_tavily_api_key_here"
+
         self.search_tool = TavilySearch(max_results=2)
 
     def test_search(self):
