@@ -62,3 +62,26 @@ graph_builder.add_edge(START, "chatbot")
 # Compile the graph
 compiled_graph = graph_builder.compile()
 
+
+def main():
+    """Main function to run the assistant."""
+    def stream_graph_updates(user_input: str):
+        for event in compiled_graph.stream({"messages": [{"role": "user", "content": user_input}]}):
+            for value in event.values():
+                print("Assistant:", value["messages"][-1].content)
+
+    while True:
+        try:
+            user_input = input("User: ")
+            if user_input.lower() in ["quit", "exit", "q"]:
+                print("Goodbye!")
+                break
+            stream_graph_updates(user_input)
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+
+if __name__ == "__main__":
+    main()
+
+
