@@ -1,0 +1,6 @@
+langgraph>=0.2.0
+langchain-anthropic
+langchain-tavily
+langchain-core
+typing-extensions
+python-dotenv
