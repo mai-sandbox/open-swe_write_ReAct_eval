@@ -99,7 +99,7 @@ tools = [search_tool, add, subtract, multiply, divide]
 # Bind tools to the LLM with error handling
 try:
     llm_with_tools = llm.bind_tools(tools)
-except Exception as e:
+except Exception:
     # Fallback to LLM without tools if binding fails
     llm_with_tools = llm
 
@@ -156,6 +156,7 @@ except Exception as e:
     graph_builder.add_edge(START, "chatbot")
     graph_builder.add_edge("chatbot", END)
     app = graph_builder.compile()
+
 
 
 
