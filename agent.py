@@ -17,7 +17,7 @@ class State(TypedDict):
 
 
 # Initialize the LLM
-llm = ChatAnthropic(model="claude-3-5-sonnet-20241022")
+llm = ChatAnthropic(model="claude-3-5-sonnet-20241022")  # type: ignore
 
 # Define web search tool
 search_tool = TavilySearch(max_results=2)
@@ -78,6 +78,7 @@ graph_builder.add_edge("tools", "chatbot")
 
 # Compile the graph
 app = graph_builder.compile()
+
 
 
 
