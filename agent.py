@@ -89,8 +89,12 @@ def divide(a: float, b: float) -> float:
 # Collect all tools
 tools = [search_tool, add, subtract, multiply, divide]
 
-# Bind tools to the LLM
-llm_with_tools = llm.bind_tools(tools)
+# Bind tools to the LLM with error handling
+try:
+    llm_with_tools = llm.bind_tools(tools)
+except Exception as e:
+    # Fallback to LLM without tools if binding fails
+    llm_with_tools = llm
 
 
 def chatbot(state: State) -> Dict[str, Any]:
@@ -138,6 +142,7 @@ graph_builder.add_edge("tools", "chatbot")
 
 # Compile the graph
 app = graph_builder.compile()
+
 
 
 
