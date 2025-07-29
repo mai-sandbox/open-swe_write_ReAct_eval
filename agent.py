@@ -32,31 +32,47 @@ llm = init_chat_model("anthropic:claude-3-5-sonnet-latest")
 # Define web search tool
 search_tool = TavilySearch(max_results=2)
 
-# Define calculator tools
+# Define calculator tools with enhanced error handling
 @tool
 def add(a: float, b: float) -> float:
     """Add two numbers together."""
-    return a + b
+    try:
+        return float(a) + float(b)
+    except (ValueError, TypeError) as e:
+        raise ValueError(f"Invalid input for addition: {e}")
 
 
 @tool
 def subtract(a: float, b: float) -> float:
     """Subtract the second number from the first number."""
-    return a - b
+    try:
+        return float(a) - float(b)
+    except (ValueError, TypeError) as e:
+        raise ValueError(f"Invalid input for subtraction: {e}")
 
 
 @tool
 def multiply(a: float, b: float) -> float:
     """Multiply two numbers together."""
-    return a * b
+    try:
+        return float(a) * float(b)
+    except (ValueError, TypeError) as e:
+        raise ValueError(f"Invalid input for multiplication: {e}")
 
 
 @tool
 def divide(a: float, b: float) -> float:
     """Divide the first number by the second number."""
-    if b == 0:
-        raise ValueError("Cannot divide by zero")
-    return a / b
+    try:
+        a_float = float(a)
+        b_float = float(b)
+        if b_float == 0:
+            raise ValueError("Cannot divide by zero")
+        return a_float / b_float
+    except (ValueError, TypeError) as e:
+        if "divide by zero" in str(e).lower():
+            raise ValueError("Cannot divide by zero")
+        raise ValueError(f"Invalid input for division: {e}")
 
 
 # Collect all tools
@@ -111,4 +127,5 @@ graph_builder.add_edge("tools", "chatbot")
 
 # Compile the graph
 app = graph_builder.compile()
+
 
