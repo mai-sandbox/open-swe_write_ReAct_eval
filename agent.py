@@ -32,44 +32,69 @@ class State(TypedDict):
 @tool
 def calculator(expression: str) -> str:
     """
-    Perform basic mathematical calculations safely.
+    Perform basic mathematical calculations safely using AST evaluation.
+    
+    Supports arithmetic operations: +, -, *, /, **, %
+    Uses secure AST parsing similar to ast.literal_eval principles for safety.
     
     Args:
-        expression: Mathematical expression to evaluate (e.g., "2 + 3 * 4")
+        expression: Mathematical expression to evaluate (e.g., "2 + 3 * 4", "10 / 2", "2 ** 3")
         
     Returns:
-        String result of the calculation or error message
+        String result of the calculation or descriptive error message
     """
     try:
-        # Remove whitespace and validate input
+        # Input validation and sanitization
+        if not isinstance(expression, str):
+            return "Error: Expression must be a string"
+        
         expression = expression.strip()
         if not expression:
             return "Error: Empty expression provided"
         
-        # Parse the expression into an AST
-        try:
-            node = ast.parse(expression, mode='eval')
-        except SyntaxError:
-            return f"Error: Invalid mathematical expression: {expression}"
+        # Check for potentially dangerous patterns
+        dangerous_patterns = ['import', 'exec', 'eval', '__', 'open', 'file', 'input', 'raw_input']
+        if any(pattern in expression.lower() for pattern in dangerous_patterns):
+            return f"Error: Expression contains potentially unsafe operations: {expression}"
         
-        # Evaluate the AST safely
-        result = _evaluate_ast_node(node.body)
+        # Parse the expression into an AST for safe evaluation
+        try:
+            # Use ast.parse in eval mode to create an AST
+            parsed_ast = ast.parse(expression, mode='eval')
+        except SyntaxError as e:
+            return f"Error: Invalid mathematical syntax in '{expression}': {str(e)}"
+        
+        # Safely evaluate the AST using our secure evaluator
+        # This follows ast.literal_eval security principles but extends to arithmetic
+        result = _safe_eval_math_ast(parsed_ast.body)
         
         if result is None:
-            return f"Error: Unsupported operation in expression: {expression}"
+            return f"Error: Unsupported operation or invalid expression: {expression}"
         
-        # Format the result
-        if isinstance(result, float) and result.is_integer():
-            return str(int(result))
+        # Format the result appropriately
+        if isinstance(result, float):
+            # Handle very large or very small numbers
+            if abs(result) > 1e15:
+                return f"Error: Result too large: {result}"
+            elif abs(result) < 1e-15 and result != 0:
+                return f"Error: Result too small: {result}"
+            # Convert integer-valued floats to integers for cleaner display
+            elif result.is_integer():
+                return str(int(result))
+            else:
+                # Round to reasonable precision to avoid floating point artifacts
+                return str(round(result, 10))
         else:
             return str(result)
             
     except ZeroDivisionError:
-        return "Error: Division by zero"
+        return f"Error: Division by zero in expression: {expression}"
     except OverflowError:
-        return "Error: Number too large"
+        return f"Error: Number too large to compute in expression: {expression}"
+    except ValueError as e:
+        return f"Error: Invalid value in expression '{expression}': {str(e)}"
     except Exception as e:
-        return f"Error: Failed to calculate {expression}: {str(e)}"
+        return f"Error: Failed to calculate '{expression}': {str(e)}"
 
 
 def _evaluate_ast_node(node):
@@ -215,3 +240,4 @@ graph_builder.add_edge("tools", "chatbot")
 
 # Compile the graph
 app = graph_builder.compile()
+
