@@ -118,14 +118,12 @@ def chatbot(state: State) -> Dict[str, Any]:
         # Safely get messages from state with default empty list
         messages = state.get("messages", [])
         if not messages:
-            from langchain_core.messages import AIMessage
             return {"messages": [AIMessage(content="Hello! How can I help you today?")]}
         
         response = llm_with_tools.invoke(messages)
         return {"messages": [response]}
-    except Exception as e:
+    except Exception:
         # Handle LLM errors gracefully without exposing internal details
-        from langchain_core.messages import AIMessage
         error_response = AIMessage(
             content="I apologize, but I encountered an error while processing your request. Please try again."
         )
@@ -158,6 +156,7 @@ except Exception as e:
     graph_builder.add_edge(START, "chatbot")
     graph_builder.add_edge("chatbot", END)
     app = graph_builder.compile()
+
 
 
 
