@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
 """Test script to verify the LangGraph chat assistant works correctly."""
 
+import os
 from langchain_core.messages import HumanMessage
+
+# Set dummy API keys for testing
+os.environ["TAVILY_API_KEY"] = "dummy_key_for_testing"
+os.environ["ANTHROPIC_API_KEY"] = "dummy_key_for_testing"
+
 from agent import app
 
 def test_basic_functionality():
@@ -75,3 +81,4 @@ if __name__ == "__main__":
         print("✅ All tests passed! The agent is working correctly.")
     else:
         print("❌ Some tests failed. Please check the implementation.")
+
