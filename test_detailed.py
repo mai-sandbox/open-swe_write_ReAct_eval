@@ -16,7 +16,8 @@ def test_graph_structure():
         # Check graph structure
         print(f"Graph type: {type(app)}")
         print(f"Graph nodes: {list(app.nodes.keys())}")
-        print(f"Graph edges: {list(app.edges.keys())}")
+        # Note: CompiledStateGraph doesn't expose edges directly
+        print("Graph compiled successfully with proper structure")
         
         # Verify expected nodes exist
         expected_nodes = ['chatbot', 'tools']
@@ -222,3 +223,4 @@ def main():
 if __name__ == "__main__":
     success = main()
     sys.exit(0 if success else 1)
+
