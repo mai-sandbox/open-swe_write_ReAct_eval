@@ -97,20 +97,51 @@ def calculator(expression: str) -> str:
         return f"Error: Failed to calculate '{expression}': {str(e)}"
 
 
-def _evaluate_ast_node(node):
+def _safe_eval_math_ast(node):
     """
     Safely evaluate an AST node for mathematical expressions.
-    Only allows basic arithmetic operations.
-    """
-    if isinstance(node, ast.Constant):  # Numbers
-        return node.value
-    elif isinstance(node, ast.BinOp):  # Binary operations
-        left = _evaluate_ast_node(node.left)
-        right = _evaluate_ast_node(node.right)
+    
+    This function implements security principles similar to ast.literal_eval
+    but extends support to basic arithmetic operations (+, -, *, /, **, %).
+    Only allows safe mathematical operations on numbers.
+    
+    Args:
+        node: AST node to evaluate
         
+    Returns:
+        Numeric result or None if operation is not supported
+        
+    Raises:
+        ZeroDivisionError: For division by zero
+        OverflowError: For results that are too large
+        ValueError: For invalid numeric operations
+    """
+    # Handle numeric constants (literals)
+    if isinstance(node, ast.Constant):
+        # Only allow numeric constants for security
+        if isinstance(node.value, (int, float, complex)):
+            return node.value
+        else:
+            return None  # Reject non-numeric literals
+    
+    # Handle numeric literals (for older Python versions)
+    elif isinstance(node, ast.Num):
+        return node.n
+    
+    # Handle binary operations (+, -, *, /, **, %)
+    elif isinstance(node, ast.BinOp):
+        left = _safe_eval_math_ast(node.left)
+        right = _safe_eval_math_ast(node.right)
+        
+        # Both operands must be valid numbers
         if left is None or right is None:
             return None
+        
+        # Ensure operands are numeric
+        if not isinstance(left, (int, float, complex)) or not isinstance(right, (int, float, complex)):
+            return None
             
+        # Perform the operation based on the operator type
         if isinstance(node.op, ast.Add):
             return left + right
         elif isinstance(node.op, ast.Sub):
@@ -119,19 +150,29 @@ def _evaluate_ast_node(node):
             return left * right
         elif isinstance(node.op, ast.Div):
             if right == 0:
-                raise ZeroDivisionError()
+                raise ZeroDivisionError("Division by zero")
             return left / right
         elif isinstance(node.op, ast.Pow):
+            # Prevent extremely large exponents that could cause system issues
+            if isinstance(right, (int, float)) and abs(right) > 1000:
+                raise OverflowError("Exponent too large")
             return left ** right
         elif isinstance(node.op, ast.Mod):
             if right == 0:
-                raise ZeroDivisionError()
+                raise ZeroDivisionError("Modulo by zero")
             return left % right
         else:
-            return None
-    elif isinstance(node, ast.UnaryOp):  # Unary operations
-        operand = _evaluate_ast_node(node.operand)
+            return None  # Unsupported binary operation
+    
+    # Handle unary operations (+x, -x)
+    elif isinstance(node, ast.UnaryOp):
+        operand = _safe_eval_math_ast(node.operand)
+        
         if operand is None:
+            return None
+        
+        # Ensure operand is numeric
+        if not isinstance(operand, (int, float, complex)):
             return None
             
         if isinstance(node.op, ast.UAdd):
@@ -139,7 +180,10 @@ def _evaluate_ast_node(node):
         elif isinstance(node.op, ast.USub):
             return -operand
         else:
-            return None
+            return None  # Unsupported unary operation
+    
+    # Reject all other node types for security
+    # This includes: function calls, attribute access, subscripting, etc.
     else:
         return None
 
@@ -240,4 +284,5 @@ graph_builder.add_edge("tools", "chatbot")
 
 # Compile the graph
 app = graph_builder.compile()
+
 
